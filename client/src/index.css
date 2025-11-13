@@ -237,3 +237,99 @@ pre { white-space: pre-wrap; font-size: 14px; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.tools-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.subtitle {
+  color: #555;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.generate-form {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.form-grid select,
+.form-grid input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.generate-btn {
+  background: #4285f4;
+  color: white;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.generate-btn:disabled {
+  background: #999;
+  cursor: not-allowed;
+}
+
+.gemini-output {
+  background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+  color: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.output-header {
+  padding: 20px;
+  background: rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.copy-btn {
+  background: white;
+  color: #4285f4;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.content-box {
+  background: rgba(255,255,255,0.1);
+  padding: 30px;
+  backdrop-filter: blur(10px);
+}
+
+.content-box pre {
+  white-space: pre-wrap;
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 0;
+  font-family: 'Georgia', serif;
+}

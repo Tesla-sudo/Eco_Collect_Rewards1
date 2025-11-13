@@ -1,10 +1,12 @@
-const User = require('../models/User');
-const Student = require('../models/Student');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+// backend/controllers/authController.js
+import User from '../models/User.js';
+import Student from '../models/Student.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { generateCBCContent } from '../utils/gemini.js';
 
-// === AUTH FUNCTIONS (from original) ===
-const register = async (req, res) => {
+// Register
+export const register = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
@@ -30,7 +32,8 @@ const register = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
+// Login
+export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -52,7 +55,7 @@ const login = async (req, res) => {
   }
 };
 
-const getMe = async (req, res) => {
+export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
     res.json(user);
@@ -61,8 +64,7 @@ const getMe = async (req, res) => {
   }
 };
 
-// === NEW TEACHER FUNCTIONS ===
-const updateProfile = async (req, res) => {
+export const updateProfile = async (req, res) => {
   const { classes, subjects } = req.body;
   try {
     const user = await User.findById(req.user.id);
@@ -78,7 +80,7 @@ const updateProfile = async (req, res) => {
   }
 };
 
-const getProfile = async (req, res) => {
+export const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
     res.json(user);
@@ -87,7 +89,7 @@ const getProfile = async (req, res) => {
   }
 };
 
-const addStudent = async (req, res) => {
+export const addStudent = async (req, res) => {
   const { name, class: studentClass, subject, performance } = req.body;
   try {
     let student = await Student.findOne({ name, class: studentClass, subject, teacher: req.user.id });
@@ -105,7 +107,7 @@ const addStudent = async (req, res) => {
   }
 };
 
-const getStudents = async (req, res) => {
+export const getStudents = async (req, res) => {
   try {
     const students = await Student.find({ teacher: req.user.id });
     res.json(students);
@@ -114,22 +116,32 @@ const getStudents = async (req, res) => {
   }
 };
 
-const generateContent = async (req, res) => {
-  const { type, class: studentClass, subject } = req.body;
+export const generateContent = async (req, res) => {
+  const { type, grade, subject, topic } = req.body;
+
+  if (!type || !grade || !subject) {
+    return res.status(400).json({ error: 'Grade, subject, and type are required' });
+  }
+
   try {
-    let content = '';
-    if (type === 'workplan') {
-      content = `CBC Workplan for Grade ${studentClass} ${subject}:\n\nObjective: Develop problem-solving competency.\nActivities:\n- Group discussion (30min)\n- Practical demo (45min)\nAssessment: Rubric-based observation.`;
-    } else if (type === 'questions') {
-      content = `5 CBC Questions for Grade ${studentClass} ${subject}:\n1. Apply concept X to real-life (competency: critical thinking)\n2. Design a model... (competency: creativity)\n...`;
+    const result = await generateCBCContent({ type, grade, subject, topic: topic || '' });
+
+    if (!result.success) {
+      return res.status(500).json({ error: result.error });
     }
-    res.json({ content });
+
+    res.json({
+      content: result.content,
+      generatedAt: result.generatedAt,
+      model: "gemini-2.5-flash"
+    });
   } catch (err) {
-    res.status(500).json({ msg: 'AI generation error' });
+    console.error('Gemini Error:', err);
+    res.status(500).json({ error: 'AI generation failed' });
   }
 };
 
-const getRecommendations = async (req, res) => {
+export const getRecommendations = async (req, res) => {
   const { studentId } = req.body;
   try {
     const student = await Student.findById(studentId);
@@ -150,14 +162,14 @@ const getRecommendations = async (req, res) => {
 };
 
 // === EXPORT ALL FUNCTIONS ===
-module.exports = {
-  register,
-  login,
-  getMe,
-  updateProfile,
-  getProfile,
-  addStudent,
-  getStudents,
-  generateContent,
-  getRecommendations
-};
+// module.exports = {
+//   register,
+//   login,
+//   getMe,
+//   updateProfile,
+//   getProfile,
+//   addStudent,
+//   getStudents,
+//   generateContent,
+//   getRecommendations
+// };
