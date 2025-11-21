@@ -1,4 +1,4 @@
-# Eco_Collect_Rewards1
+# Mwalimu Assist
 
 # 1. Backend Setup
 Installation of dependencies 
